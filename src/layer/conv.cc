@@ -54,44 +54,15 @@ void Conv::forward(const Matrix& bottom) {
   int n_sample = bottom.cols();
   top.resize(height_out * width_out * channel_out, n_sample);
   data_cols.resize(n_sample);
-  float* dataColData = (float *)malloc(height_kernel * width_kernel * channel_in * height_out * width_out * sizeof(float));
   for (int i = 0; i < n_sample; i ++) {
     // im2col
-    float* imageData = (float *)(bottom.col(i)).transpose().data();
-    unrollGPUWrapper(channel_in, height_in, width_in, height_kernel, imageData, dataColData);
-    Matrix data_col = Eigen::Map<Matrix>(dataColData, height_out * width_out, height_kernel * width_kernel * channel_in);
-
+    Matrix data_col;
+    im2col(bottom.col(i), data_col);
     data_cols[i] = data_col;
     // conv by product
     Matrix result = data_col * weight;  // result: (hw_out, channel_out)
     result.rowwise() += bias.transpose();
     top.col(i) = Eigen::Map<Vector>(result.data(), result.size());
-  }
-
-  free(dataColData);
-}
-
-// image size: Vector (height_in * width_in * channel_in)
-// data_col size: Matrix (hw_out, hw_kernel * channel_in)
-void Conv::unroll(int C, int H, int W, int K, const Vector& image, Matrix& data_col) {
-  int c, h, w, p, q, w_base, w_unroll, h_unroll;
-
-  int H_out = H - K + 1; // Only for stride = 1 v
-  int W_out = W - K + 1; // Only for stride = 1
-  data_col.resize(H_out * W_out, C * K * K);
-
-  for (c = 0; c < C; c++) { // For each input feature map (or each color channel)
-    w_base = c * (K * K);
-    for (p = 0; p < K; p++)
-      for (q = 0; q < K; q++) { // For each input element in a local calculating kernel
-        for (h = 0; h < H_out; h++)
-          for (w = 0; w < W_out; w++) {
-            w_unroll = w_base + p * K + q;
-            h_unroll = h * W_out + w;
-            data_col(h_unroll, w_unroll) = image(c * H * W + (h + p) * W + (w + q));
-          }
-
-      }
   }
 }
 

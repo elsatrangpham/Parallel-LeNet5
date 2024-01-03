@@ -46,7 +46,6 @@ class Conv: public Layer {
   void forward(const Matrix& bottom);
   void backward(const Matrix& bottom, const Matrix& grad_top);
   void update(Optimizer& opt);
-  void unroll(int C, int H, int W, int K, const Vector& image, Matrix& data_col);
   void im2col(const Vector& image, Matrix& data_col);
   void col2im(const Matrix& data_col, Vector& image);
   int output_dim() { return dim_out; }
