@@ -30,12 +30,10 @@ int main() {
   // data
   MNIST dataset("../data/fashion_mnist/");
   dataset.read();
-  if (dataset){
-    int n_train = dataset.train_data.cols();
-    int dim_in = dataset.train_data.rows();
-    std::cout << "mnist train number: " << n_train << std::endl;
-    std::cout << "mnist test number: " << dataset.test_labels.cols() << std::endl;
-  }
+  int n_train = dataset.train_data.cols();
+  int dim_in = dataset.train_data.rows();
+  std::cout << "mnist train number: " << n_train << std::endl;
+  std::cout << "mnist test number: " << dataset.test_labels.cols() << std::endl;
   
   // dnn
   Network dnn;
