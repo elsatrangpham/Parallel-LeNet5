@@ -7,6 +7,7 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <iostream>
+#include <time.h>
 
 #include "src/layer.h"
 #include "src/layer/conv.h"
@@ -27,7 +28,7 @@
 
 int main() {
   // data
-  MNIST dataset("../data/mnist/");
+  MNIST dataset("../data/fashion_mnist/");
   dataset.read();
   int n_train = dataset.train_data.cols();
   int dim_in = dataset.train_data.rows();
@@ -35,15 +36,17 @@ int main() {
   std::cout << "mnist test number: " << dataset.test_labels.cols() << std::endl;
   // dnn
   Network dnn;
-  Layer* conv1 = new Conv(1, 28, 28, 4, 5, 5, 2, 2, 2);
-  Layer* pool1 = new MaxPooling(4, 14, 14, 2, 2, 2);
-  Layer* conv2 = new Conv(4, 7, 7, 16, 5, 5, 1, 2, 2);
-  Layer* pool2 = new MaxPooling(16, 7, 7, 2, 2, 2);
-  Layer* fc3 = new FullyConnected(pool2->output_dim(), 32);
-  Layer* fc4 = new FullyConnected(32, 10);
+  Layer* conv1 = new Conv(1, 28, 28, 6, 5, 5, 1, 0, 0);
+  Layer* pool1 = new MaxPooling(6, 24, 24, 2, 2, 2);
+  Layer* conv2 = new Conv(6, 12, 12, 16, 5, 5, 1, 0, 0);
+  Layer* pool2 = new MaxPooling(16, 8, 8, 2, 2, 2);
+  Layer* fc3 = new FullyConnected(pool2->output_dim(), 120);
+  Layer* fc4 = new FullyConnected(120, 84);
+  Layer* fc5 = new FullyConnected(84, 10);
   Layer* relu1 = new ReLU;
   Layer* relu2 = new ReLU;
   Layer* relu3 = new ReLU;
+  Layer* relu4 = new ReLU;
   Layer* softmax = new Softmax;
   dnn.add_layer(conv1);
   dnn.add_layer(relu1);
@@ -54,7 +57,10 @@ int main() {
   dnn.add_layer(fc3);
   dnn.add_layer(relu3);
   dnn.add_layer(fc4);
+  dnn.add_layer(relu4);
+  dnn.add_layer(fc5);
   dnn.add_layer(softmax);
+
   // loss
   Loss* loss = new CrossEntropy;
   dnn.add_loss(loss);
@@ -63,6 +69,10 @@ int main() {
   // SGD opt(0.001);
   const int n_epoch = 5;
   const int batch_size = 128;
+  
+  time_t start, end;
+  time(&start);
+
   for (int epoch = 0; epoch < n_epoch; epoch ++) {
     shuffle_data(dataset.train_data, dataset.train_labels);
     for (int start_idx = 0; start_idx < n_train; start_idx += batch_size) {
@@ -93,6 +103,12 @@ int main() {
     std::cout << epoch + 1 << "-th epoch, test acc: " << acc << std::endl;
     std::cout << std::endl;
   }
+
+   time(&end);
+  // Calculating total time taken by the program. 
+  double time_taken = double(end - start); 
+  std::cout << "Time taken by program is: " << time_taken << " seconds" << std::endl;
+  
   return 0;
 }
 
