@@ -28,7 +28,7 @@
 
 int main() {
   // data
-  MNIST dataset("../data/fashion_mnist/");
+  MNIST dataset("C:/Users/phamh/Downloads/Parallel-LeNet5/data/fashion_mnist/");
   dataset.read();
   int n_train = dataset.train_data.cols();
   int dim_in = dataset.train_data.rows();
