@@ -24,16 +24,19 @@
 #include "src/network.h"
 #include "src/optimizer.h"
 #include "src/optimizer/sgd.h"
-
+#include "src/layer/filter.h"
 
 int main() {
   // data
   MNIST dataset("../data/fashion_mnist/");
   dataset.read();
-  int n_train = dataset.train_data.cols();
-  int dim_in = dataset.train_data.rows();
-  std::cout << "mnist train number: " << n_train << std::endl;
-  std::cout << "mnist test number: " << dataset.test_labels.cols() << std::endl;
+  if (dataset){
+    int n_train = dataset.train_data.cols();
+    int dim_in = dataset.train_data.rows();
+    std::cout << "mnist train number: " << n_train << std::endl;
+    std::cout << "mnist test number: " << dataset.test_labels.cols() << std::endl;
+  }
+  
   // dnn
   Network dnn;
   Layer* conv1 = new Conv(1, 28, 28, 6, 5, 5, 1, 0, 0);
