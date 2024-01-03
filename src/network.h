@@ -42,6 +42,8 @@ class Network {
   /// Debugging tool to check parameter gradients
   void check_gradient(const Matrix& input, const Matrix& target, int n_points,
                       int seed = -1);
+
+  int use_device;
 };
 
 #endif  // SRC_NETWORK_H_

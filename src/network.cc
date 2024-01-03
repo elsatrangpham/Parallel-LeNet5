@@ -3,8 +3,11 @@
 void Network::forward(const Matrix& input) {
   if (layers.empty())
     return;
+  
+  layers[0]->use_device = use_device;
   layers[0]->forward(input);
   for (int i = 1; i < layers.size(); i++) {
+    layers[i]->use_device = use_device;
     layers[i]->forward(layers[i-1]->output());
   }
 }

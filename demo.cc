@@ -24,11 +24,10 @@
 #include "src/network.h"
 #include "src/optimizer.h"
 #include "src/optimizer/sgd.h"
-#include "src/layer/filter.h"
 
 int main() {
   // data
-  MNIST dataset("C:/Users/phamh/Downloads/Parallel-LeNet5/data/fashion_mnist/");
+  MNIST dataset("../data/fashion_mnist/");
   dataset.read();
   int n_train = dataset.train_data.cols();
   int dim_in = dataset.train_data.rows();

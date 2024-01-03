@@ -25,6 +25,8 @@ class Layer {
   virtual std::vector<float> get_derivatives() const
           { return std::vector<float>(); }
   virtual void set_parameters(const std::vector<float>& param) {}
+
+  int use_device;
 };
 
 #endif  // SRC_LAYER_H_
